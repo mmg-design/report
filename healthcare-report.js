@@ -238,6 +238,26 @@ function App() {
     return () => observer.disconnect();
   }, [status]);
 
+  useEffect(() => {
+    if (status !== "ready") return undefined;
+    const revealItems = document.querySelectorAll(".chart-card:not(.is-visible), .bottom-cta:not(.is-visible)");
+    if (!revealItems.length) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.18 }
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, [status, industryTab, messagingTab, trustTab, contentTab, conversionTab, techTab, designTab]);
+
   const metrics = useMemo(() => {
     const total = rows.length;
     return {
