@@ -338,7 +338,9 @@ function App() {
               2026 Healthcare Web Report
             </p>
             <h1>
-              A <span className="scribble-underline">deep dive</span> analysis of 100+ healthcare marketing websites.
+              A <span className="scribble-underline">deep dive</span> analysis of 100+{" "}
+              <br />
+              healthcare marketing websites.
             </h1>
             <p className="hero-copy">
               A data-backed teardown of how healthcare companies use AI messaging, trust signals, content, CTAs, tech stacks,
