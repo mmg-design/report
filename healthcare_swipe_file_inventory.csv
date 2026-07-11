@@ -1,0 +1,99 @@
+index,company,url,label_node_id,screenshot_node_id,screenshot_node_name,screenshot_width,screenshot_height,page_length_category,x_position
+1,Function Health,https://www.functionhealth.com/,13:70,1:4,image 1,600,4509,long,-272
+2,Spring Health,https://www.springhealth.com/,1:18,1:12,image 2,600,3630,long,437
+3,Violet,https://www.joinviolet.com/,11:9,9:3,image 3,600,4477,long,1146
+4,Artera,https://artera.io/,11:19,11:11,image 4,600,3255,long,1855
+5,Nova Benefits,https://www.novabenefits.com/,11:30,11:28,image 6,600,3246,long,2562
+6,Bamboo Health,https://bamboohealth.com/,13:61,13:56,image 8,600,4069,long,3269
+7,Actium Health,https://www.actiumhealth.com/,13:62,11:36,image 7,600,1831,medium,3976
+8,Preto Health,https://paretohealth.com/,13:69,13:67,image 9,600,2475,medium,4683
+9,Morlais Health,https://www.morlaishealth.co.uk/,13:79,13:77,image 10,600,2758,medium,5390
+10,Calmind,https://calmind.com/,15:100,13:81,image 11,600,3404,long,6097
+11,Amazon One Medical,https://www.onemedical.com/,13:96,13:91,image 12,600,2557,medium,6804
+12,Curative,https://curative.com/,15:107,15:102,image 13,600,3317,long,7525
+13,UnMind,https://unmind.com/,15:116,15:109,image 14,600,2438,medium,8252
+14,Kin Fertility,https://kinfertility.com.au/,15:125,15:118,image 15,600,2361,medium,8973
+15,Juniper,https://www.myjuniper.com/,15:134,15:132,image 16,600,3787,long,9700
+16,SIOM,https://statenislandoralsurgery.us/,15:141,15:136,image 17,498,4096,long,10427
+17,BEN,https://www.thanksben.com/,15:148,15:143,image 18,600,2595,medium,11052
+18,Mayo Clinic,https://www.mayoclinic.org/,21:8,21:6,image 19,600,2126,medium,11779
+19,Parsley Health,https://www.parsleyhealth.com/,24:18,24:13,image 20,600,5498,very long,12506
+20,Hims,https://www.hims.com/,24:28,24:23,image 21,600,4096,long,13233
+21,Exact Medicare,https://www.exactmedicare.com/,24:37,24:30,image 22,600,2503,medium,13960
+22,Vibrix Pharmacy,https://www.vibrixpharmacy.com/,24:46,24:44,image 23,664,4096,long,14687
+23,Amazon Medical,https://www.onemedical.com/,36:8,36:6,image 24,600,2557,medium,15478
+24,Oscar,https://www.hioscar.com/,38:51,38:49,image 25,600,2303,medium,16205
+25,Hers,https://www.forhers.com/,38:58,38:56,image 26,600,3147,medium,16932
+26,Healthmatch,https://healthmatch.io/,38:62,38:60,image 27,600,418,short,17659
+27,Maven,https://www.mavenclinic.com/,38:66,38:64,image 28,600,2809,medium,18386
+28,Darwin Research Group,http://www.darwinresearchgroup.com/,38:73,38:71,image 29,600,3251,long,19113
+29,Commure,https://www.commure.com/,38:77,38:75,image 30,600,5354,very long,19840
+30,Anterior,https://www.anterior.com/,38:81,38:79,image 31,600,2515,medium,20567
+31,Yuvo Health,https://www.yuvohealth.com/,38:85,38:83,image 32,600,3679,long,21294
+32,Farmbox RX,https://www.farmboxrx.com/,38:89,38:87,image 33,600,2308,medium,22021
+33,Lyra Health,https://www.lyrahealth.com/,38:93,38:91,image 34,600,2460,medium,22748
+34,Candor Health,https://candorhealth.com/,38:97,38:95,image 35,600,1698,medium,23475
+35,Augmedix,https://www.augmedix.com/,44:5,44:3,image 36,600,2526,medium,24352
+36,Subscribili,https://www.subscribili.com/,84:2,84:8,image 37,597,4096,long,25079
+37,Abridge,https://www.abridge.com/,139:4,139:8,image 38,705,4096,long,25847
+38,Suki,https://www.suki.ai/,139:14,139:27,image 40,643,4096,long,26668
+39,Ambience Healthcare,https://www.ambiencehealthcare.com/,139:20,139:37,image 41,749,4096,long,27544
+40,Nabla,https://nabla.com/,139:57,139:62,image 42,775,4096,long,28453
+41,Corti,https://www.corti.ai/,140:68,140:73,image 43,744,4096,long,29359
+42,Hippocratic AI,https://hippocraticai.com/,140:75,140:80,image 44,638,4096,long,30197
+43,Heidi Health,https://www.heidihealth.com/,140:82,140:87,image 45,1018,4096,long,31172
+44,Cohere Health,https://www.coherehealth.com/,140:89,140:94,image 46,850,4096,long,32253
+45,Cedar,https://www.cedar.com/,140:96,140:101,image 47,506,4096,long,33110
+46,Tennr,https://www.tennr.com/,140:103,140:108,image 48,764,4096,long,33898
+47,Waystar,https://www.waystar.com/,140:110,141:118,image 49,670,4096,long,34756
+48,Akasa,https://akasa.com/,141:120,141:125,image 50,1018,4096,long,35741
+49,Canvas Medical,https://www.canvasmedical.com/,141:127,142:132,image 51,863,1914,medium,36795
+50,Elation Health,https://www.elationhealth.com/,142:134,143:142,image 52,831,2762,medium,37755
+51,Redox,https://redoxengine.com/,143:144,143:152,image 53,703,4096,long,38658
+52,Health Gorilla,https://redoxengine.com/,143:154,152:6,image 54,938,2990,medium,39616
+53,Datavant,https://www.datavant.com/,152:8,152:29,image 55,668,4096,long,40564
+54,Particle Health,https://particlehealth.com,152:12,153:35,image 56,884,3142,medium,41475
+55,Innovaccer,https://innovaccer.com/,152:16,153:38,image 57,677,4096,long,42387
+56,Arcadia,https://arcadia.io/,152:20,153:41,image 58,886,4096,long,43307
+57,Aledade,https://aledade.com,152:24,153:44,image 59,817,2937,medium,44314
+58,Pearl Health,https://www.pearlhealth.com/,153:46,153:71,image 60,909,4286,long,45322
+59,Memora Health,https://www.commure.com/engage,153:50,153:74,image 61,736,4096,long,46289
+60,Privia Health,https://www.priviahealth.com/,153:54,153:77,image 62,988,3044,medium,47296
+61,Agilon Health,https://www.agilonhealth.com/,153:58,153:80,image 63,1139,3476,long,48549
+62,Modern Health,https://www.modernhealth.com/,153:62,154:83,image 64,748,4096,long,49637
+63,Headway,https://headway.co/,153:66,154:102,image 65,992,3669,long,50699
+64,Grow Therapy,https://growtherapy.com/,154:85,154:105,image 66,754,4096,long,51764
+65,Alma,https://helloalma.com/,154:89,154:108,image 67,732,3411,long,52699
+66,SonderMind,https://www.sondermind.com/,154:93,154:111,image 68,608,4008,long,53561
+67,NeuroFlow,https://www.neuroflow.com/,154:97,154:154,image 69,929,3293,long,54572
+68,Carrot Fertility,https://www.get-carrot.com/,154:113,154:157,image 70,822,4096,long,55730
+69,Progyny,https://progyny.com/,154:117,155:160,image 71,822,4267,long,56796
+70,Ovia Health,https://www.oviahealth.com/,154:121,155:163,image 72,822,4322,long,57836
+71,Kindbody,https://kindbody.com/,154:125,155:166,image 73,824,2830,medium,58861
+72,Transcarent,https://transcarent.com/,154:129,155:172,image 74,822,3739,long,59935
+73,Included Health,https://includedhealth.com/,154:133,155:175,image 75,822,3594,long,60975
+74,Quantum Health,https://quantum-health.com/,154:137,155:178,image 76,828,3462,long,62018
+75,Collective Health,https://collectivehealth.com/,154:141,155:181,image 77,828,6497,very long,63064
+76,Rightway,https://www.rightwayhealthcare.com/,154:145,155:184,image 78,828,4416,long,64086
+77,Nava Benefits,https://www.navabenefits.com/,154:149,155:187,image 79,829,4508,long,65109
+78,Devoted Health,https://devoted.com/,155:189,155:239,image 80,817,4096,long,66126
+79,Clover Health,https://www.cloverhealth.com/,155:193,155:245,image 81,813,2693,medium,67135
+80,Turquoise Health,https://turquoise.health/,155:197,155:248,image 82,813,4347,long,68142
+81,Sidecar Health,https://www.sidecarhealth.com/,155:205,156:251,image 83,832,1444,short,69158
+82,Fuze Health,https://rx.fuzehealth.com/,155:210,156:254,image 84,832,4587,long,70186
+83,DoseSpot,https://dosespot.com/,155:214,156:257,image 85,833,3207,long,71211
+84,Tempus,https://www.tempus.com/,155:218,156:260,image 86,1155,522,short,72371
+85,Viz.ai,https://www.viz.ai/,155:222,156:263,image 87,836,3240,long,73560
+86,Aidoc,https://www.aidoc.com/,155:226,156:266,image 88,834,2084,medium,74589
+87,Color Health,https://color.com/,155:230,156:325,image 89,834,5501,very long,75617
+88,Cleerly,https://cleerlyhealth.com/,155:234,157:328,image 90,832,2170,medium,76644
+89,Komodo Health,https://www.komodohealth.com/,156:284,157:331,image 91,828,3212,long,77668
+90,Veeva,https://www.veeva.com/,156:288,157:334,image 92,828,4614,very long,78690
+91,H1,https://h1.co/,156:292,157:337,image 93,834,3593,long,79715
+92,Medable,https://www.medable.com/,156:296,157:340,image 94,960,4096,long,80806
+93,Medallion,https://medallion.co/,156:300,157:376,image 95,960,4676,very long,81960
+94,Incredible Health,https://www.incrediblehealth.com/,156:304,158:379,image 96,766,4096,long,83017
+95,Nomad Health,https://nomadhealth.com/,156:308,158:383,image 97,758,2353,medium,83966
+96,Overjet,https://www.overjet.com/,156:312,158:386,image 98,756,3605,long,84917
+97,Dandy,https://www.meetdandy.com/,156:316,158:389,image 99,756,5357,very long,85867
+98,Tebra,https://www.tebra.com/,157:370,158:392,image 100,756,4236,long,86817
