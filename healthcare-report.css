@@ -297,14 +297,6 @@ h3 {
   flex: 0 0 auto;
 }
 
-iframe[src*="senja.io"],
-iframe[title*="Senja"] {
-  right: 20px !important;
-  bottom: 20px !important;
-  left: auto !important;
-  z-index: 30 !important;
-}
-
 .hero-card {
   position: relative;
   width: min(97%, 1840px);

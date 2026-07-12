@@ -221,12 +221,27 @@ function pinSenjaWidget() {
   document.querySelectorAll(selectors.join(",")).forEach((element) => {
     if (element.tagName === "SCRIPT") return;
     const style = window.getComputedStyle(element);
-    if (element.tagName !== "IFRAME" && style.position !== "fixed") return;
-    Object.assign(element.style, {
-      left: "auto",
-      right: "20px",
-      bottom: "20px",
-      zIndex: "30",
+    if (element.tagName === "IFRAME" || style.position === "fixed") {
+      Object.assign(element.style, {
+        left: "auto",
+        right: "20px",
+        bottom: "20px",
+        zIndex: "30",
+      });
+    }
+
+    // Senja renders its floating card inside an open shadow root, so the
+    // host element's own position doesn't affect it — reach inside.
+    const root = element.shadowRoot;
+    if (!root) return;
+    root.querySelectorAll("*").forEach((inner) => {
+      if (window.getComputedStyle(inner).position !== "fixed") return;
+      Object.assign(inner.style, {
+        left: "auto",
+        right: "20px",
+        bottom: "20px",
+        zIndex: "30",
+      });
     });
   });
 }
