@@ -1,6 +1,7 @@
 const { useEffect, useMemo, useState } = React;
 
 const CSV_PATH = "./healthcare_swipe_file_tech_design_matrix.csv";
+const ACCESS_KEY = "mmg_healthcare_report_access_v2";
 
 const sections = [
   { id: "websites", label: "Websites", icon: "./assets/section-icons/the-websites.svg" },
@@ -184,9 +185,37 @@ function scrollToSection(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function pinSenjaWidget() {
+  const selectors = [
+    'iframe[src*="senja.io"]',
+    'iframe[title*="Senja"]',
+    '[id*="senja" i]',
+    '[class*="senja" i]',
+  ];
+
+  document.querySelectorAll(selectors.join(",")).forEach((element) => {
+    if (element.tagName === "SCRIPT") return;
+    const style = window.getComputedStyle(element);
+    if (element.tagName !== "IFRAME" && style.position !== "fixed") return;
+    Object.assign(element.style, {
+      left: "auto",
+      right: "20px",
+      bottom: "20px",
+      zIndex: "30",
+    });
+  });
+}
+
 function App() {
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("loading");
+  const [hasAccess, setHasAccess] = useState(() => window.localStorage?.getItem(ACCESS_KEY) === "true");
+  const [gateOpen, setGateOpen] = useState(false);
+  const [pendingScrollTarget, setPendingScrollTarget] = useState(null);
   const [activeSection, setActiveSection] = useState("websites");
   const [websiteQuery, setWebsiteQuery] = useState("");
   const [industryFilter, setIndustryFilter] = useState("All");
@@ -219,6 +248,39 @@ function App() {
         setStatus("error");
       });
   }, []);
+
+  useEffect(() => {
+    pinSenjaWidget();
+    const observer = new MutationObserver(pinSenjaWidget);
+    observer.observe(document.body, { childList: true, subtree: true });
+    const interval = window.setInterval(pinSenjaWidget, 1200);
+
+    return () => {
+      observer.disconnect();
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("gate-is-open", gateOpen);
+    return () => document.body.classList.remove("gate-is-open");
+  }, [gateOpen]);
+
+  useEffect(() => {
+    if (hasAccess) return undefined;
+
+    const handleScroll = () => {
+      const hero = document.querySelector(".hero");
+      if (!hero) return;
+      const triggerPoint = hero.offsetTop + hero.offsetHeight - 120;
+      if (window.scrollY < triggerPoint || gateOpen) return;
+      setPendingScrollTarget(null);
+      setGateOpen(true);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasAccess, gateOpen]);
 
   useEffect(() => {
     if (status !== "ready") return undefined;
@@ -309,6 +371,23 @@ function App() {
   const sidebar = sidebarCopy[activeSection] || sidebarCopy.websites;
   const activeMeta = sectionMeta[activeSection] || sectionMeta.websites;
 
+  const requestAccess = (target = "websites") => {
+    if (hasAccess) {
+      scrollToSection(target);
+      return;
+    }
+    setPendingScrollTarget(target);
+    setGateOpen(true);
+  };
+
+  const unlockReport = (email) => {
+    window.localStorage?.setItem(ACCESS_KEY, "true");
+    window.localStorage?.setItem(`${ACCESS_KEY}_email`, email);
+    setHasAccess(true);
+    setGateOpen(false);
+    window.setTimeout(() => scrollToSection(pendingScrollTarget || "websites"), 80);
+  };
+
   return (
     <div className="site-shell">
       <header className="topbar">
@@ -321,7 +400,7 @@ function App() {
               <button
                 key={section.id}
                 className={activeSection === section.id ? "is-active" : ""}
-                onClick={() => scrollToSection(section.id)}
+                onClick={() => requestAccess(section.id)}
               >
                 {section.label}
               </button>
@@ -347,9 +426,9 @@ function App() {
               and design patterns to explain complex products and convert high-stakes audiences.
             </p>
             <div className="hero-actions">
-              <a className="button button-primary" href="#websites">
+              <button className="button button-primary" type="button" onClick={() => requestAccess("websites")}>
                 View the analysis
-              </a>
+              </button>
               <a
                 className="button button-secondary"
                 href="https://www.figma.com/design/OFspJtK4N2LMYeWv96PA4d/Healthcare-Website-Swipe-File?node-id=180-18&t=M5qU2mShWpJXCQVN-1"
@@ -402,6 +481,64 @@ function App() {
       </div>
 
       <BottomCta />
+
+      {gateOpen && <AccessGate onSubmit={unlockReport} />}
+    </div>
+  );
+}
+
+function AccessGate({ onSubmit }) {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+
+  const submit = (event) => {
+    event.preventDefault();
+    const normalizedEmail = email.trim();
+    if (!isValidEmail(normalizedEmail)) {
+      setError("Give us a real email. The robots are already disappointed enough.");
+      return;
+    }
+    onSubmit(normalizedEmail);
+  };
+
+  return (
+    <div className="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-gate-title">
+      <div className="access-gate-card">
+        <div className="access-gate-bg" aria-hidden="true">
+          <img src="./assets/footer-cta/footer-cta-bg.webp" alt="" />
+        </div>
+        <div className="access-gate-content">
+          <div className="access-gate-icon">
+            <img src="./assets/footer-cta/mmg-icon.svg" alt="" />
+          </div>
+          <p className="access-gate-kicker">Tiny Toll Booth</p>
+          <h2 id="access-gate-title">Want the full thing?</h2>
+          <p>
+            We spent a mildly unreasonable 100+ hours on this, so the least dramatic trade is your email.
+            You get the full deep dive, and we send one useful newsletter a month. No daily inbox confetti.
+          </p>
+          <form className="access-gate-form" onSubmit={submit}>
+            <label htmlFor="report-email">Work email</label>
+            <div className="access-gate-field">
+              <input
+                id="report-email"
+                type="email"
+                value={email}
+                placeholder="you@company.com"
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  if (error) setError("");
+                }}
+                autoFocus
+              />
+              <button className="button button-primary" type="submit">
+                Read the full deep dive.
+              </button>
+            </div>
+            {error && <div className="access-gate-error">{error}</div>}
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
