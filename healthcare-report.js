@@ -3,6 +3,27 @@ const { useEffect, useMemo, useState } = React;
 const CSV_PATH = "./healthcare_swipe_file_tech_design_matrix.csv";
 const ACCESS_KEY = "mmg_healthcare_report_access_v3";
 
+// ConvertKit (Kit) email gate integration.
+const CONVERTKIT_FORM_ID = "9675435";
+const CONVERTKIT_API_KEY = "kit_02c16212e1bf567213223a2995dff6ba";
+
+function subscribeToConvertKit(email) {
+  if (!CONVERTKIT_FORM_ID || CONVERTKIT_FORM_ID === "YOUR_CONVERTKIT_FORM_ID") {
+    console.warn("ConvertKit isn't connected yet. Add CONVERTKIT_FORM_ID and CONVERTKIT_API_KEY in healthcare-report.js.");
+    return Promise.resolve();
+  }
+  return fetch(`https://api.kit.com/v4/forms/${CONVERTKIT_FORM_ID}/subscribers`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Kit-Api-Key": CONVERTKIT_API_KEY,
+    },
+    body: JSON.stringify({ email_address: email }),
+  }).catch((error) => {
+    console.error("ConvertKit subscribe failed", error);
+  });
+}
+
 const sections = [
   { id: "websites", label: "Websites", icon: "./assets/section-icons/the-websites.svg" },
   { id: "industries", label: "Industries", icon: "./assets/section-icons/industries.svg" },
@@ -384,10 +405,11 @@ function App() {
   const unlockReport = (email) => {
     window.localStorage?.setItem(ACCESS_KEY, "true");
     window.localStorage?.setItem(`${ACCESS_KEY}_email`, email);
+    subscribeToConvertKit(email);
     setHasAccess(true);
     setGateOpen(false);
     window.setTimeout(() => setConfettiActive(true), 120);
-    window.setTimeout(() => setConfettiActive(false), 2300);
+    window.setTimeout(() => setConfettiActive(false), 2900);
     window.setTimeout(() => scrollToSection(pendingScrollTarget || "websites"), 80);
   };
 
@@ -498,11 +520,11 @@ function App() {
 }
 
 function ConfettiBurst() {
-  const pieces = Array.from({ length: 26 }, (_, index) => ({
+  const pieces = Array.from({ length: 46 }, (_, index) => ({
     id: index,
-    left: `${8 + ((index * 37) % 84)}%`,
-    delay: `${(index % 7) * 45}ms`,
-    drift: `${((index % 9) - 4) * 18}px`,
+    left: `${5 + ((index * 23) % 90)}%`,
+    delay: `${(index % 9) * 55}ms`,
+    drift: `${((index % 11) - 5) * 26}px`,
     rotate: `${(index * 29) % 180}deg`,
   }));
 
@@ -576,6 +598,11 @@ function AccessGate({ onSubmit, onClose }) {
             </div>
             {error && <div className="access-gate-error">{error}</div>}
           </form>
+          <div className="access-gate-proof" aria-label="Report scope">
+            <span className="access-gate-proof-item">100+ websites analyzed</span>
+            <span className="access-gate-proof-item">50+ benchmarks</span>
+            <span className="access-gate-proof-item">12 healthcare sectors</span>
+          </div>
         </div>
       </div>
     </div>
