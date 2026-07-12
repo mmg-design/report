@@ -1,7 +1,7 @@
 const { useEffect, useMemo, useState } = React;
 
 const CSV_PATH = "./healthcare_swipe_file_tech_design_matrix.csv";
-const ACCESS_KEY = "mmg_healthcare_report_access_v2";
+const ACCESS_KEY = "mmg_healthcare_report_access_v3";
 
 const sections = [
   { id: "websites", label: "Websites", icon: "./assets/section-icons/the-websites.svg" },
@@ -215,6 +215,7 @@ function App() {
   const [status, setStatus] = useState("loading");
   const [hasAccess, setHasAccess] = useState(() => window.localStorage?.getItem(ACCESS_KEY) === "true");
   const [gateOpen, setGateOpen] = useState(false);
+  const [confettiActive, setConfettiActive] = useState(false);
   const [pendingScrollTarget, setPendingScrollTarget] = useState(null);
   const [activeSection, setActiveSection] = useState("websites");
   const [websiteQuery, setWebsiteQuery] = useState("");
@@ -385,7 +386,15 @@ function App() {
     window.localStorage?.setItem(`${ACCESS_KEY}_email`, email);
     setHasAccess(true);
     setGateOpen(false);
+    window.setTimeout(() => setConfettiActive(true), 120);
+    window.setTimeout(() => setConfettiActive(false), 2300);
     window.setTimeout(() => scrollToSection(pendingScrollTarget || "websites"), 80);
+  };
+
+  const closeGate = () => {
+    setGateOpen(false);
+    setPendingScrollTarget(null);
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 40);
   };
 
   return (
@@ -482,12 +491,39 @@ function App() {
 
       <BottomCta />
 
-      {gateOpen && <AccessGate onSubmit={unlockReport} />}
+      {gateOpen && <AccessGate onSubmit={unlockReport} onClose={closeGate} />}
+      {confettiActive && <ConfettiBurst />}
     </div>
   );
 }
 
-function AccessGate({ onSubmit }) {
+function ConfettiBurst() {
+  const pieces = Array.from({ length: 26 }, (_, index) => ({
+    id: index,
+    left: `${8 + ((index * 37) % 84)}%`,
+    delay: `${(index % 7) * 45}ms`,
+    drift: `${((index % 9) - 4) * 18}px`,
+    rotate: `${(index * 29) % 180}deg`,
+  }));
+
+  return (
+    <div className="confetti-burst" aria-hidden="true">
+      {pieces.map((piece) => (
+        <span
+          key={piece.id}
+          style={{
+            "--left": piece.left,
+            "--delay": piece.delay,
+            "--drift": piece.drift,
+            "--rotate": piece.rotate,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function AccessGate({ onSubmit, onClose }) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
@@ -507,6 +543,9 @@ function AccessGate({ onSubmit }) {
         <div className="access-gate-bg" aria-hidden="true">
           <img src="./assets/footer-cta/footer-cta-bg.webp" alt="" />
         </div>
+        <button className="access-gate-close" type="button" onClick={onClose} aria-label="Close email gate">
+          ×
+        </button>
         <div className="access-gate-content">
           <div className="access-gate-icon">
             <img src="./assets/footer-cta/mmg-icon.svg" alt="" />
@@ -514,7 +553,7 @@ function AccessGate({ onSubmit }) {
           <p className="access-gate-kicker">Tiny Toll Booth</p>
           <h2 id="access-gate-title">Want the full thing?</h2>
           <p>
-            We spent a mildly unreasonable 100+ hours on this, so the least dramatic trade is your email.
+            We spent 30+ hours on this, so the least dramatic trade is your email.
             You get the full deep dive, and we send one useful newsletter a month. No daily inbox confetti.
           </p>
           <form className="access-gate-form" onSubmit={submit}>
@@ -532,7 +571,7 @@ function AccessGate({ onSubmit }) {
                 autoFocus
               />
               <button className="button button-primary" type="submit">
-                Read the full deep dive.
+                Read the full deep dive
               </button>
             </div>
             {error && <div className="access-gate-error">{error}</div>}

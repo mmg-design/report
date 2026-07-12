@@ -994,6 +994,31 @@ iframe[title*="Senja"] {
   pointer-events: none;
 }
 
+.access-gate-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  cursor: pointer;
+  font-size: 28px;
+  line-height: 1;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.access-gate-close:hover,
+.access-gate-close:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(0.96);
+}
+
 .access-gate-content {
   position: relative;
   z-index: 1;
@@ -1088,6 +1113,7 @@ iframe[title*="Senja"] {
 
 .access-gate-field .button {
   min-height: 54px;
+  font-weight: 850;
   white-space: nowrap;
 }
 
@@ -1095,6 +1121,40 @@ iframe[title*="Senja"] {
   color: #ffffff;
   font-size: 13px;
   font-weight: 700;
+}
+
+.confetti-burst {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-burst span {
+  position: absolute;
+  top: -18px;
+  left: var(--left);
+  width: 10px;
+  height: 16px;
+  border-radius: 3px;
+  background: var(--color-bright-teal);
+  animation: confettiFall 1600ms var(--delay) cubic-bezier(0.19, 1, 0.22, 1) both;
+  transform: translateX(0) rotate(var(--rotate));
+}
+
+.confetti-burst span:nth-child(3n + 1) {
+  background: #45d7df;
+}
+
+.confetti-burst span:nth-child(3n + 2) {
+  background: #ffffff;
+}
+
+.confetti-burst span:nth-child(4n) {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
 }
 
 .loading,
@@ -1149,6 +1209,20 @@ iframe[title*="Senja"] {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -18px, 0) rotate(var(--rotate));
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift), 105vh, 0) rotate(calc(var(--rotate) + 260deg));
   }
 }
 
@@ -1273,8 +1347,13 @@ iframe[title*="Senja"] {
   .bar-fill,
   .donut,
   .access-gate,
-  .access-gate-card {
+  .access-gate-card,
+  .confetti-burst span {
     opacity: 1;
     transform: none;
+  }
+
+  .confetti-burst {
+    display: none;
   }
 }
