@@ -1,4 +1,4 @@
-const { useEffect, useMemo, useState } = React;
+const { useEffect, useMemo, useRef, useState } = React;
 
 const CSV_PATH = "./healthcare_swipe_file_tech_design_matrix.csv";
 const ACCESS_KEY = "mmg_healthcare_report_access_v3";
@@ -288,10 +288,13 @@ function App() {
     return () => document.body.classList.remove("gate-is-open");
   }, [gateOpen]);
 
+  const gateDismissedRef = useRef(false);
+
   useEffect(() => {
     if (hasAccess) return undefined;
 
     const handleScroll = () => {
+      if (gateDismissedRef.current) return;
       const hero = document.querySelector(".hero");
       if (!hero) return;
       const triggerPoint = hero.offsetTop + hero.offsetHeight - 120;
@@ -414,6 +417,7 @@ function App() {
   };
 
   const closeGate = () => {
+    gateDismissedRef.current = true;
     setGateOpen(false);
     setPendingScrollTarget(null);
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 40);
