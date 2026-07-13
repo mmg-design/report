@@ -1,4 +1,4 @@
-const { useEffect, useMemo, useRef, useState } = React;
+const { useEffect, useMemo, useState } = React;
 
 const CSV_PATH = "./healthcare_swipe_file_tech_design_matrix.csv";
 const ACCESS_KEY = "mmg_healthcare_report_access_v3";
@@ -210,37 +210,6 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-function pinSenjaWidget() {
-  const selectors = [
-    'iframe[src*="senja.io"]',
-    'iframe[title*="Senja"]',
-    '[id*="senja" i]',
-    '[class*="senja" i]',
-  ];
-
-  const shrink = (target) => {
-    target.style.transform = "scale(0.78)";
-    target.style.transformOrigin = "bottom left";
-  };
-
-  document.querySelectorAll(selectors.join(",")).forEach((element) => {
-    if (element.tagName === "SCRIPT") return;
-    const style = window.getComputedStyle(element);
-    if (element.tagName === "IFRAME" || style.position === "fixed") {
-      shrink(element);
-    }
-
-    // Senja renders its floating card inside an open shadow root, so the
-    // host element's own position/transform doesn't affect it — reach inside.
-    const root = element.shadowRoot;
-    if (!root) return;
-    root.querySelectorAll("*").forEach((inner) => {
-      if (window.getComputedStyle(inner).position !== "fixed") return;
-      shrink(inner);
-    });
-  });
-}
-
 function App() {
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("loading");
@@ -282,40 +251,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    pinSenjaWidget();
-    const observer = new MutationObserver(pinSenjaWidget);
-    observer.observe(document.body, { childList: true, subtree: true });
-    const interval = window.setInterval(pinSenjaWidget, 1200);
-
-    return () => {
-      observer.disconnect();
-      window.clearInterval(interval);
-    };
-  }, []);
-
-  useEffect(() => {
-    document.body.classList.toggle("gate-is-open", gateOpen);
+    document.body.classList.toggle("gate-is-open", gateOpen || !hasAccess);
     return () => document.body.classList.remove("gate-is-open");
-  }, [gateOpen]);
-
-  const gateDismissedRef = useRef(false);
-
-  useEffect(() => {
-    if (hasAccess) return undefined;
-
-    const handleScroll = () => {
-      if (gateDismissedRef.current) return;
-      const hero = document.querySelector(".hero");
-      if (!hero) return;
-      const triggerPoint = hero.offsetTop + hero.offsetHeight - 120;
-      if (window.scrollY < triggerPoint || gateOpen) return;
-      setPendingScrollTarget(null);
-      setGateOpen(true);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasAccess, gateOpen]);
+  }, [gateOpen, hasAccess]);
 
   useEffect(() => {
     if (status !== "ready") return undefined;
@@ -333,7 +271,7 @@ function App() {
       if (element) observer.observe(element);
     });
     return () => observer.disconnect();
-  }, [status]);
+  }, [status, hasAccess]);
 
   useEffect(() => {
     if (status !== "ready") return undefined;
@@ -353,7 +291,7 @@ function App() {
 
     revealItems.forEach((item) => observer.observe(item));
     return () => observer.disconnect();
-  }, [status, industryTab, messagingTab, trustTab, contentTab, conversionTab, techTab, designTab]);
+  }, [status, hasAccess, industryTab, messagingTab, trustTab, contentTab, conversionTab, techTab, designTab]);
 
   const metrics = useMemo(() => {
     const total = rows.length;
@@ -427,11 +365,48 @@ function App() {
   };
 
   const closeGate = () => {
-    gateDismissedRef.current = true;
     setGateOpen(false);
     setPendingScrollTarget(null);
-    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 40);
   };
+
+  const reportBody = (
+    <>
+      <div className="report-layout">
+        <main className="main-flow">
+          <WebsitesSection rows={rows} filteredRows={filteredRows} industries={industries} websiteQuery={websiteQuery} setWebsiteQuery={setWebsiteQuery} industryFilter={industryFilter} setIndustryFilter={setIndustryFilter} signalFilter={signalFilter} setSignalFilter={setSignalFilter} />
+          <IndustriesSection rows={rows} tab={industryTab} setTab={setIndustryTab} />
+          <MessagingSection rows={rows} tab={messagingTab} setTab={setMessagingTab} />
+          <TrustSection rows={rows} tab={trustTab} setTab={setTrustTab} />
+          <ContentSection rows={rows} tab={contentTab} setTab={setContentTab} />
+          <ConversionSection rows={rows} tab={conversionTab} setTab={setConversionTab} />
+          <TechSection rows={rows} tab={techTab} setTab={setTechTab} />
+          <DesignSection rows={rows} tab={designTab} setTab={setDesignTab} />
+          <InsightsSection />
+        </main>
+
+        <aside className="sticky-panel" aria-label="Current section snapshot">
+          <div className="sticky-content">
+            <div className="sidebar-kicker">
+              <span className="sidebar-icon">
+                <img src={activeMeta.icon} alt="" />
+              </span>
+              <span className="sidebar-label">{activeMeta.label || "Overview"}</span>
+            </div>
+            <h3>{sidebar.title}</h3>
+            <p>{sidebar.body}</p>
+            {sidebar.stats.map(([value, label]) => (
+              <div className="sidebar-stat" key={`${value}-${label}`}>
+                <strong>{value}</strong>
+                <span>{label}</span>
+              </div>
+            ))}
+          </div>
+        </aside>
+      </div>
+
+      <BottomCta />
+    </>
+  );
 
   return (
     <div className="site-shell">
@@ -492,43 +467,40 @@ function App() {
         </div>
       </section>
 
-      <div className="report-layout">
-        <main className="main-flow">
-          <WebsitesSection rows={rows} filteredRows={filteredRows} industries={industries} websiteQuery={websiteQuery} setWebsiteQuery={setWebsiteQuery} industryFilter={industryFilter} setIndustryFilter={setIndustryFilter} signalFilter={signalFilter} setSignalFilter={setSignalFilter} />
-          <IndustriesSection rows={rows} tab={industryTab} setTab={setIndustryTab} />
-          <MessagingSection rows={rows} tab={messagingTab} setTab={setMessagingTab} />
-          <TrustSection rows={rows} tab={trustTab} setTab={setTrustTab} />
-          <ContentSection rows={rows} tab={contentTab} setTab={setContentTab} />
-          <ConversionSection rows={rows} tab={conversionTab} setTab={setConversionTab} />
-          <TechSection rows={rows} tab={techTab} setTab={setTechTab} />
-          <DesignSection rows={rows} tab={designTab} setTab={setDesignTab} />
-          <InsightsSection />
-        </main>
-
-        <aside className="sticky-panel" aria-label="Current section snapshot">
-          <div className="sticky-content">
-            <div className="sidebar-kicker">
-              <span className="sidebar-icon">
-                <img src={activeMeta.icon} alt="" />
-              </span>
-              <span className="sidebar-label">{activeMeta.label || "Overview"}</span>
-            </div>
-            <h3>{sidebar.title}</h3>
-            <p>{sidebar.body}</p>
-            {sidebar.stats.map(([value, label]) => (
-              <div className="sidebar-stat" key={`${value}-${label}`}>
-                <strong>{value}</strong>
-                <span>{label}</span>
-              </div>
-            ))}
+      {hasAccess ? (
+        reportBody
+      ) : (
+        <div className="locked-wrap">
+          <div className="locked-content" aria-hidden="true">
+            {reportBody}
           </div>
-        </aside>
-      </div>
-
-      <BottomCta />
+          <LockedTeaser onUnlock={() => requestAccess("websites")} />
+        </div>
+      )}
 
       {gateOpen && <AccessGate onSubmit={unlockReport} onClose={closeGate} />}
       {confettiActive && <ConfettiBurst />}
+    </div>
+  );
+}
+
+function LockedTeaser({ onUnlock }) {
+  return (
+    <div className="locked-teaser" aria-label="Report locked">
+      <section className="locked-teaser-card">
+        <div className="locked-teaser-icon">
+          <img src="./assets/footer-cta/mmg-icon.svg" alt="" />
+        </div>
+        <p className="locked-teaser-kicker">Locked</p>
+        <h2>The full report is behind a 30-second toll booth.</h2>
+        <p>
+          Every chart, table, and breakdown below is gated. Drop your email once and the whole
+          analysis unlocks — no re-asking, no daily inbox confetti.
+        </p>
+        <button className="button button-primary" type="button" onClick={onUnlock}>
+          Unlock the full report
+        </button>
+      </section>
     </div>
   );
 }
