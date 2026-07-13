@@ -215,6 +215,7 @@ function App() {
   const [status, setStatus] = useState("loading");
   const [hasAccess, setHasAccess] = useState(() => window.localStorage?.getItem(ACCESS_KEY) === "true");
   const [gateOpen, setGateOpen] = useState(false);
+  const [hasSeenGate, setHasSeenGate] = useState(false);
   const [confettiActive, setConfettiActive] = useState(false);
   const [pendingScrollTarget, setPendingScrollTarget] = useState(null);
   const [activeSection, setActiveSection] = useState("websites");
@@ -386,6 +387,7 @@ function App() {
 
   const closeGate = () => {
     gateDismissedRef.current = true;
+    setHasSeenGate(true);
     setGateOpen(false);
     setPendingScrollTarget(null);
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 40);
@@ -496,7 +498,7 @@ function App() {
           <div className="locked-content" aria-hidden="true">
             {reportBody}
           </div>
-          <LockedTeaser onUnlock={() => requestAccess("websites")} />
+          {hasSeenGate && <LockedTeaser onUnlock={() => requestAccess("websites")} />}
         </div>
       )}
 

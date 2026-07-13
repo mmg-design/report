@@ -131,6 +131,8 @@ select {
   overflow: hidden;
   padding: 74px 0 0;
   text-align: center;
+  mask-image: linear-gradient(180deg, #000 0%, #000 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 85%, transparent 100%);
 }
 
 .container {
@@ -342,16 +344,17 @@ h3 {
   pointer-events: none;
   user-select: none;
   transform: scale(1.02);
+  mask-image: linear-gradient(180deg, transparent 0, #000 200px);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 200px);
 }
 
 .locked-teaser {
-  position: absolute;
-  inset: 0 0 auto 0;
-  z-index: 2;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
   display: grid;
   place-items: center;
-  min-height: 640px;
-  padding: 96px 24px;
+  padding: 24px;
   pointer-events: none;
 }
 
