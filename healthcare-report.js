@@ -215,9 +215,8 @@ function App() {
   const [status, setStatus] = useState("loading");
   const [hasAccess, setHasAccess] = useState(() => window.localStorage?.getItem(ACCESS_KEY) === "true");
   const [gateOpen, setGateOpen] = useState(false);
-  const [hasSeenGate, setHasSeenGate] = useState(false);
-  const [confettiActive, setConfettiActive] = useState(false);
   const [pendingScrollTarget, setPendingScrollTarget] = useState(null);
+  const [confettiActive, setConfettiActive] = useState(false);
   const [activeSection, setActiveSection] = useState("websites");
   const [websiteQuery, setWebsiteQuery] = useState("");
   const [industryFilter, setIndustryFilter] = useState("All");
@@ -251,11 +250,6 @@ function App() {
       });
   }, []);
 
-  useEffect(() => {
-    document.body.classList.toggle("gate-is-open", gateOpen);
-    return () => document.body.classList.remove("gate-is-open");
-  }, [gateOpen]);
-
   const gateDismissedRef = useRef(false);
 
   useEffect(() => {
@@ -265,8 +259,8 @@ function App() {
       if (gateDismissedRef.current || gateOpen) return;
       const hero = document.querySelector(".hero");
       if (!hero) return;
-      // Viewport-relative so it still fires once the hero scrolls out of
-      // view even when the locked page below it is short.
+      // Viewport-relative so it still fires once the hero (the homescreen
+      // area) scrolls out of view.
       if (hero.getBoundingClientRect().bottom > 160) return;
       setPendingScrollTarget(null);
       setGateOpen(true);
@@ -387,7 +381,6 @@ function App() {
 
   const closeGate = () => {
     gateDismissedRef.current = true;
-    setHasSeenGate(true);
     setGateOpen(false);
     setPendingScrollTarget(null);
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 40);
@@ -495,36 +488,14 @@ function App() {
         reportBody
       ) : (
         <div className="locked-wrap">
-          <div className="locked-content" aria-hidden="true">
+          <div className={`locked-content${gateOpen ? " is-blurred" : ""}`} aria-hidden="true">
             {reportBody}
           </div>
-          {hasSeenGate && <LockedTeaser onUnlock={() => requestAccess("websites")} />}
         </div>
       )}
 
       {gateOpen && <AccessGate onSubmit={unlockReport} onClose={closeGate} />}
       {confettiActive && <ConfettiBurst />}
-    </div>
-  );
-}
-
-function LockedTeaser({ onUnlock }) {
-  return (
-    <div className="locked-teaser" aria-label="Report locked">
-      <section className="locked-teaser-card">
-        <div className="locked-teaser-icon">
-          <img src="./assets/footer-cta/mmg-icon.svg" alt="" />
-        </div>
-        <p className="locked-teaser-kicker">Locked</p>
-        <h2>The full report is behind a 30-second toll booth.</h2>
-        <p>
-          Every chart, table, and breakdown below is gated. Drop your email once and the whole
-          analysis unlocks — no re-asking, no daily inbox confetti.
-        </p>
-        <button className="button button-primary" type="button" onClick={onUnlock}>
-          Unlock the full report
-        </button>
-      </section>
     </div>
   );
 }
@@ -600,7 +571,6 @@ function AccessGate({ onSubmit, onClose }) {
                   setEmail(event.target.value);
                   if (error) setError("");
                 }}
-                autoFocus
               />
               <button className="button button-primary" type="submit">
                 Read the full deep dive
