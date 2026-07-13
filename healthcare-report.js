@@ -1,4 +1,4 @@
-const { useEffect, useMemo, useState } = React;
+const { useEffect, useMemo, useRef, useState } = React;
 
 const CSV_PATH = "./healthcare_swipe_file_tech_design_matrix.csv";
 const ACCESS_KEY = "mmg_healthcare_report_access_v3";
@@ -251,9 +251,29 @@ function App() {
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle("gate-is-open", gateOpen || !hasAccess);
+    document.body.classList.toggle("gate-is-open", gateOpen);
     return () => document.body.classList.remove("gate-is-open");
-  }, [gateOpen, hasAccess]);
+  }, [gateOpen]);
+
+  const gateDismissedRef = useRef(false);
+
+  useEffect(() => {
+    if (hasAccess) return undefined;
+
+    const handleScroll = () => {
+      if (gateDismissedRef.current || gateOpen) return;
+      const hero = document.querySelector(".hero");
+      if (!hero) return;
+      // Viewport-relative so it still fires once the hero scrolls out of
+      // view even when the locked page below it is short.
+      if (hero.getBoundingClientRect().bottom > 160) return;
+      setPendingScrollTarget(null);
+      setGateOpen(true);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasAccess, gateOpen]);
 
   useEffect(() => {
     if (status !== "ready") return undefined;
@@ -365,8 +385,10 @@ function App() {
   };
 
   const closeGate = () => {
+    gateDismissedRef.current = true;
     setGateOpen(false);
     setPendingScrollTarget(null);
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 40);
   };
 
   const reportBody = (

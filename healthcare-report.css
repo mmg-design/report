@@ -345,12 +345,13 @@ h3 {
 }
 
 .locked-teaser {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 2;
   display: grid;
   place-items: center;
-  padding: 24px;
+  min-height: 640px;
+  padding: 96px 24px;
   pointer-events: none;
 }
 
