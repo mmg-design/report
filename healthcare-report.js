@@ -215,6 +215,7 @@ function App() {
   const [status, setStatus] = useState("loading");
   const [hasAccess, setHasAccess] = useState(() => window.localStorage?.getItem(ACCESS_KEY) === "true");
   const [gateOpen, setGateOpen] = useState(false);
+  const [contentLocked, setContentLocked] = useState(false);
   const [pendingScrollTarget, setPendingScrollTarget] = useState(null);
   const [confettiActive, setConfettiActive] = useState(false);
   const [activeSection, setActiveSection] = useState("websites");
@@ -250,25 +251,34 @@ function App() {
       });
   }, []);
 
-  const gateDismissedRef = useRef(false);
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     if (hasAccess) return undefined;
 
     const handleScroll = () => {
-      if (gateDismissedRef.current || gateOpen) return;
+      const currentY = window.scrollY;
+      const scrollingDown = currentY > lastScrollYRef.current;
+      lastScrollYRef.current = currentY;
+      // Only re-open on active downward scrolls — otherwise the
+      // scroll-to-top animation after closing would immediately reopen it.
+      if (!scrollingDown) return;
+
       const hero = document.querySelector(".hero");
       if (!hero) return;
-      // Viewport-relative so it still fires once the hero (the homescreen
-      // area) scrolls out of view.
-      if (hero.getBoundingClientRect().bottom > 160) return;
+      // Trigger once roughly half the hero (the homescreen area) has
+      // scrolled past — waiting for the full, image-heavy hero to clear
+      // the viewport requires far more scrolling than users expect.
+      if (hero.getBoundingClientRect().bottom > window.innerHeight * 0.55) return;
+
+      setContentLocked(true);
       setPendingScrollTarget(null);
       setGateOpen(true);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasAccess, gateOpen]);
+  }, [hasAccess]);
 
   useEffect(() => {
     if (status !== "ready") return undefined;
@@ -364,6 +374,7 @@ function App() {
       scrollToSection(target);
       return;
     }
+    setContentLocked(true);
     setPendingScrollTarget(target);
     setGateOpen(true);
   };
@@ -380,7 +391,6 @@ function App() {
   };
 
   const closeGate = () => {
-    gateDismissedRef.current = true;
     setGateOpen(false);
     setPendingScrollTarget(null);
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 40);
@@ -488,7 +498,7 @@ function App() {
         reportBody
       ) : (
         <div className="locked-wrap">
-          <div className={`locked-content${gateOpen ? " is-blurred" : ""}`} aria-hidden="true">
+          <div className={`locked-content${contentLocked ? " is-blurred" : ""}`} aria-hidden="true">
             {reportBody}
           </div>
         </div>
