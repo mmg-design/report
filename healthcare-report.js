@@ -564,10 +564,10 @@ function AccessGate({ onSubmit, onClose }) {
             <img src="./assets/footer-cta/mmg-icon.svg" alt="" />
           </div>
           <p className="access-gate-kicker">Tiny Toll Booth</p>
-          <h2 id="access-gate-title">Want the full thing?</h2>
+          <h2 id="access-gate-title">Actually, it's not much of a wall. It's just your email.</h2>
           <p>
-            We spent 30+ hours on this, so the least dramatic trade is your email.
-            You get the full deep dive, and we send one useful newsletter a month. No daily inbox confetti.
+            Sorry, but we spent 30+ hours getting this report right, just for you 😊
+            The monthly email takes another 30+ hours, so at least it's not filler 😂
           </p>
           <form className="access-gate-form" onSubmit={submit}>
             <label htmlFor="report-email">Work email</label>
