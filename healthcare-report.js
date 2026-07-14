@@ -42,7 +42,7 @@ const tabTooltips = {
   Counts: "Shows how many websites fall into each healthcare category.",
   "AI messaging": "Shows how many websites talk about AI in a place visitors can see quickly.",
   Audience: "Shows who each website seems to be speaking to, like providers, payers, or patients.",
-  "CTA confidence": "Shows how clear we feel the main call-to-action is from the page.",
+  "CTA clarity": "Shows how clear we feel the main call-to-action is from the page.",
   "Customer logos": "Shows whether the page uses customer logos or logo strips as proof.",
   Security: "Shows whether the page mentions security, privacy, compliance, or trust language.",
   "Case studies": "Shows whether the page points to customer stories or real examples.",
@@ -75,63 +75,63 @@ const sidebarCopy = {
     title: "Category shape",
     body: "The sample leans toward provider enablement, AI, data infrastructure, consumer care, benefits, and behavioral health.",
     stats: [
-      ["16", "Provider enablement sites"],
-      ["16", "AI / clinical automation sites"],
-      ["13", "Data and life sciences sites"],
+      ["16%", "Provider enablement sites"],
+      ["16%", "AI / clinical automation sites"],
+      ["13%", "Data and life sciences sites"],
     ],
   },
   messaging: {
     title: "Messaging pressure",
     body: "AI has become a front-door signal across healthcare, but category clarity and CTA language still carry the conversion work.",
     stats: [
-      ["55", "Mention AI prominently"],
-      ["38", "Do not mention AI prominently"],
-      ["7", "Blocked or unknown"],
+      ["55%", "Mention AI prominently"],
+      ["38%", "Do not mention AI prominently"],
+      ["7%", "Blocked or unknown"],
     ],
   },
   trust: {
     title: "Trust is the product",
     body: "Healthcare sites rely heavily on logos, security language, privacy links, case stories, and quantified outcomes.",
     stats: [
-      ["81", "Use customer logos or logo-style proof"],
-      ["98", "Mention security or compliance"],
-      ["75", "Show case studies or customer stories"],
+      ["81%", "Use customer logos or logo-style proof"],
+      ["98%", "Mention security or compliance"],
+      ["75%", "Show case studies or customer stories"],
     ],
   },
   content: {
     title: "Content motion",
     body: "Most brands maintain blogs, resources, or education hubs. Downloadable assets are less universal.",
     stats: [
-      ["89", "Show active content motion"],
-      ["48", "Show downloadable resource signals"],
-      ["91", "Use animation or motion signals"],
+      ["89%", "Show active content motion"],
+      ["48%", "Show downloadable resource signals"],
+      ["91%", "Use animation or motion signals"],
     ],
   },
   conversion: {
     title: "Conversion design",
     body: "Almost every site segments navigation, but only about half expose identifiable conversion or form tooling.",
     stats: [
-      ["98", "Use segmented navigation"],
-      ["49", "Expose conversion/chat/form tools"],
-      ["77", "Segment by audience and solution"],
+      ["98%", "Use segmented navigation"],
+      ["49%", "Expose conversion/chat/form tools"],
+      ["77%", "Segment by audience and solution"],
     ],
   },
   tech: {
     title: "Marketing infrastructure",
     body: "Webflow and WordPress dominate visible CMS signals. Experimentation and personalization are much less common.",
     stats: [
-      ["90", "Have tracking scripts detected"],
-      ["18", "Show experimentation or personalization"],
-      ["35", "Have Webflow signals"],
+      ["90%", "Have tracking scripts detected"],
+      ["18%", "Show experimentation or personalization"],
+      ["35%", "Have Webflow signals"],
     ],
   },
   design: {
     title: "Creative patterns",
     body: "Most sites blend product UI, people or clinician imagery, and abstract graphics. Purely static pages are rare.",
     stats: [
-      ["91", "Show motion or animation signals"],
-      ["59", "Have long captured pages"],
-      ["7", "Have very long captured pages"],
+      ["91%", "Show motion or animation signals"],
+      ["59%", "Have long captured pages"],
+      ["7%", "Have very long captured pages"],
     ],
   },
   insights: {
@@ -192,9 +192,30 @@ function countBy(rows, field, options = {}) {
     const values = options.split
       ? raw.split(";").map((value) => value.trim()).filter(Boolean)
       : [raw || "Unknown"];
-    values.forEach((value) => counts.set(value, (counts.get(value) || 0) + 1));
+    values.forEach((value) => {
+      const label = value === "not detected" ? "undetectable" : value;
+      counts.set(label, (counts.get(label) || 0) + 1);
+    });
   });
   return Array.from(counts, ([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
+}
+
+function combineContactUsVariants(data) {
+  const variants = [];
+  let combinedTotal = 0;
+
+  const rest = data.filter((item) => {
+    if (item.label.trim().toLowerCase() !== "contact us") return true;
+    variants.push(item.label);
+    combinedTotal += item.value;
+    return false;
+  });
+
+  if (!combinedTotal) return data;
+
+  const others = variants.filter((label) => label !== "Contact Us");
+  const label = others.length ? `Contact Us (${others.join(", ")})` : "Contact Us";
+  return [...rest, { label, value: combinedTotal }].sort((a, b) => b.value - a.value);
 }
 
 function percent(rows, field, yesValue = "yes") {
@@ -228,7 +249,7 @@ function App() {
   const [contentTab, setContentTab] = useState("Content motion");
   const [conversionTab, setConversionTab] = useState("Segmentation");
   const [techTab, setTechTab] = useState("CMS");
-  const [designTab, setDesignTab] = useState("Motion");
+  const [designTab, setDesignTab] = useState("Media style");
 
   useEffect(() => {
     if (Array.isArray(window.REPORT_DATA)) {
@@ -757,7 +778,7 @@ function WebsitesSection(props) {
             </div>
             <h3>{row.company}</h3>
             <p>{row.offer_type}</p>
-            <div className="company-cta">Main CTA: {row.main_cta_live || "Not detected"}</div>
+            <div className="company-cta">Main CTA: {row.main_cta_live || "Undetectable"}</div>
             <div className="tag-row">
               <span className="tag">AI: {row.ai_in_prominent_messaging}</span>
               <span className="tag">Security: {row.security_or_compliance_mentions_detected}</span>
@@ -783,10 +804,10 @@ function IndustriesSection({ rows, tab, setTab }) {
 }
 
 function MessagingSection({ rows, tab, setTab }) {
-  const field = tab === "CTA confidence" ? "cta_confidence" : tab === "Audience" ? "primary_audience" : "ai_in_prominent_messaging";
+  const field = tab === "CTA clarity" ? "cta_confidence" : tab === "Audience" ? "primary_audience" : "ai_in_prominent_messaging";
   return (
     <Section id="messaging" eyebrow="Positioning" title="Messaging, AI, and audience focus" copy="This section captures how healthcare brands explain themselves, who they address, and whether AI appears in prominent homepage messaging.">
-      <Tabs tabs={["AI messaging", "Audience", "CTA confidence"]} active={tab} onChange={setTab} />
+      <Tabs tabs={["AI messaging", "Audience", "CTA clarity"]} active={tab} onChange={setTab} />
       <div className="chart-grid">
         <div className="chart-card">
           <BarChart data={countBy(rows, field)} limit={10} />
@@ -824,12 +845,15 @@ function TrustSection({ rows, tab, setTab }) {
 
 function ContentSection({ rows, tab, setTab }) {
   const field = tab === "Downloads" ? "free_or_downloadable_resource_detected" : "active_content_motion_detected";
+  const data = countBy(rows, field).map((item) =>
+    tab === "Downloads" && item.label === "unknown" ? { ...item, label: "undetectable" } : item
+  );
   return (
     <Section id="content" eyebrow="Education" title="Content motion and resource strategy" copy="Most sites publish or organize educational content. Fewer make downloadable assets obvious from the homepage.">
       <Tabs tabs={["Content motion", "Downloads"]} active={tab} onChange={setTab} />
       <div className="chart-grid">
         <div className="chart-card">
-          <BarChart data={countBy(rows, field)} />
+          <BarChart data={data} />
         </div>
         <div className="chart-card">
           <Donut value={rows.filter((row) => row[field] === "yes").length} total={rows.length} label={`${tab} signal`} />
@@ -845,11 +869,13 @@ function ConversionSection({ rows, tab, setTab }) {
     "Form tools": "conversion_chat_forms_detected",
     "Main CTA": "main_cta_live",
   };
+  const rawData = countBy(rows, map[tab]);
+  const data = tab === "Main CTA" ? combineContactUsVariants(rawData) : rawData;
   return (
     <Section id="conversion" eyebrow="Funnel" title="Conversion and navigation patterns" copy="Healthcare sites frequently segment by audience, product, condition, or use case. The visible conversion stack varies more widely." mint>
       <Tabs tabs={Object.keys(map)} active={tab} onChange={setTab} />
       <div className="chart-card">
-        <BarChart data={countBy(rows, map[tab])} limit={tab === "Main CTA" ? 14 : 8} />
+        <BarChart data={data} limit={tab === "Main CTA" ? 14 : 8} />
       </div>
     </Section>
   );
@@ -875,9 +901,9 @@ function TechSection({ rows, tab, setTab }) {
 
 function DesignSection({ rows, tab, setTab }) {
   const map = {
+    "Media style": "design_media_style_signal",
     Motion: "animation_motion_detected",
     "Motion tech": "animation_motion_tech",
-    "Media style": "design_media_style_signal",
   };
   return (
     <Section id="design" eyebrow="Aesthetics" title="Motion, media, and page shape" copy="Design patterns reveal how brands balance people, product UI, abstract healthcare graphics, and longer proof-heavy pages.">
