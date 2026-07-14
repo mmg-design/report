@@ -566,10 +566,10 @@ function AccessGate({ onSubmit, onClose }) {
           <p className="access-gate-kicker">Tiny Toll Booth</p>
           <h2 id="access-gate-title">Look, sorry to do this...</h2>
           <p>
-            I mean, we did spend 60+ hours putting this together, triple-checking the data, and
-            building this presentation just for you. We're already in the red on this, so your
-            email will help this justify this massive financial L to our board. (Also, we send
-            one newsletter email per month.. which is also full of value.)
+            ...but we did spend 60+ hours putting this together, triple-checking the data, and
+            building this just for you. We're already in the red on this, so your email will
+            help us justify this massive financial L. (Also, we send one newsletter email per
+            month... which is also full of value.)
           </p>
           <form className="access-gate-form" onSubmit={submit}>
             <label htmlFor="report-email">Work email</label>
